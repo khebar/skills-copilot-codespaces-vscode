@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}افزودن اکانت - LinkedIn Automation System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fab fa-linkedin me-2"></i>
+                        افزودن اکانت LinkedIn جدید
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">ایمیل LinkedIn <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                            <div class="form-text">ایمیل اکانت LinkedIn خود را وارد کنید</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">رمز عبور <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="form-text">رمز عبور اکانت LinkedIn خود را وارد کنید</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="profile_name" class="form-label">نام پروفایل</label>
+                            <input type="text" class="form-control" id="profile_name" name="profile_name">
+                            <div class="form-text">نام پروفایل LinkedIn شما (اختیاری)</div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>نکته امنیتی:</strong> اطلاعات شما به صورت امن ذخیره می‌شود و فقط برای اتوماسیون استفاده خواهد شد.
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>افزودن اکانت
+                            </button>
+                            <a href="{{ url_for('accounts') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-right me-2"></i>بازگشت
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>
+                        <i class="fas fa-shield-alt me-1"></i>
+                        تمام اطلاعات شما محرمانه و امن نگهداری می‌شود
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

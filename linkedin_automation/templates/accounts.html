@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}اکانت‌های LinkedIn - LinkedIn Automation System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>مدیریت اکانت‌های LinkedIn</h2>
+            <p class="text-muted">مدیریت و نظارت بر اکانت‌های LinkedIn شما</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('add_account') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>افزودن اکانت جدید
+            </a>
+        </div>
+    </div>
+    
+    {% if accounts %}
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ایمیل</th>
+                                <th>نام پروفایل</th>
+                                <th>URL پروفایل</th>
+                                <th>وضعیت</th>
+                                <th>آخرین فعالیت</th>
+                                <th>تاریخ ایجاد</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for account in accounts %}
+                            <tr>
+                                <td>
+                                    <strong>{{ account.email }}</strong>
+                                </td>
+                                <td>{{ account.profile_name or 'نامشخص' }}</td>
+                                <td>
+                                    {% if account.profile_url %}
+                                        <a href="{{ account.profile_url }}" target="_blank" class="text-decoration-none">
+                                            <i class="fab fa-linkedin me-1"></i>مشاهده پروفایل
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">ثبت نشده</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if account.is_active else 'secondary' }}">
+                                        {{ 'فعال' if account.is_active else 'غیرفعال' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if account.last_activity %}
+                                        <small>{{ account.last_activity.strftime('%Y/%m/%d %H:%M') }}</small>
+                                    {% else %}
+                                        <span class="text-muted">هرگز</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small>{{ account.created_at.strftime('%Y/%m/%d') }}</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="#" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-key"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-outline-warning btn-sm">
+                                            <i class="fas fa-robot"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fab fa-linkedin fa-4x text-muted mb-4"></i>
+                <h4>هنوز اکانت LinkedIn اضافه نکرده‌اید</h4>
+                <p class="text-muted">برای شروع، اولین اکانت LinkedIn خود را اضافه کنید</p>
+                <a href="{{ url_for('add_account') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i>افزودن اولین اکانت
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

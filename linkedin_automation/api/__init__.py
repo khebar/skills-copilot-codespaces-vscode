@@ -377,8 +377,8 @@ def api_statistics_daily():
     ).with_entities(
         db.func.date(BotRun.start_time).label('date'),
         db.func.count(BotRun.id).label('total_runs'),
-        db.func.count(db.case([(BotRun.status == 'completed', 1)])).label('successful_runs'),
-        db.func.count(db.case([(BotRun.status == 'failed', 1)])).label('failed_runs')
+        db.func.count(db.case((BotRun.status == 'completed', 1))).label('successful_runs'),
+        db.func.count(db.case((BotRun.status == 'failed', 1))).label('failed_runs')
     ).group_by(
         db.func.date(BotRun.start_time)
     ).all()
@@ -414,7 +414,7 @@ def api_health_check():
     """API health check"""
     try:
         # Test database connection
-        db.session.execute('SELECT 1')
+        db.session.execute(db.text('SELECT 1'))
         return jsonify({
             'status': 'healthy',
             'timestamp': datetime.utcnow().isoformat(),

@@ -40,7 +40,7 @@ def admin_dashboard():
     top_accounts = db.session.query(
         LinkedInAccount,
         db.func.count(BotRun.id).label('total_runs'),
-        db.func.count(db.case([(BotRun.status == 'completed', 1)])).label('successful_runs')
+        db.func.count(db.case((BotRun.status == 'completed', 1))).label('successful_runs')
     ).join(BotRun).group_by(LinkedInAccount.id).order_by(
         db.text('successful_runs DESC')
     ).limit(10).all()
@@ -190,8 +190,8 @@ def statistics():
     daily_stats = db.session.query(
         db.func.date(BotRun.start_time).label('date'),
         db.func.count(BotRun.id).label('total_runs'),
-        db.func.count(db.case([(BotRun.status == 'completed', 1)])).label('successful_runs'),
-        db.func.count(db.case([(BotRun.status == 'failed', 1)])).label('failed_runs')
+        db.func.count(db.case((BotRun.status == 'completed', 1))).label('successful_runs'),
+        db.func.count(db.case((BotRun.status == 'failed', 1))).label('failed_runs')
     ).filter(
         BotRun.start_time >= thirty_days_ago
     ).group_by(
@@ -202,7 +202,7 @@ def statistics():
     bot_performance = db.session.query(
         BotRun.bot_type,
         db.func.count(BotRun.id).label('total_runs'),
-        db.func.count(db.case([(BotRun.status == 'completed', 1)])).label('successful_runs'),
+        db.func.count(db.case((BotRun.status == 'completed', 1))).label('successful_runs'),
         db.func.avg(
             db.extract('epoch', BotRun.end_time - BotRun.start_time)
         ).label('avg_duration')
@@ -214,8 +214,8 @@ def statistics():
     account_performance = db.session.query(
         LinkedInAccount.email,
         db.func.count(BotRun.id).label('total_runs'),
-        db.func.count(db.case([(BotRun.status == 'completed', 1)])).label('successful_runs'),
-        db.func.count(db.case([(BotRun.status == 'failed', 1)])).label('failed_runs')
+        db.func.count(db.case((BotRun.status == 'completed', 1))).label('successful_runs'),
+        db.func.count(db.case((BotRun.status == 'failed', 1))).label('failed_runs')
     ).join(BotRun).filter(
         BotRun.start_time >= thirty_days_ago
     ).group_by(LinkedInAccount.id).all()
