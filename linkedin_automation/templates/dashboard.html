@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}داشبورد - LinkedIn Automation System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>داشبورد کاربری</h2>
+            <p class="text-muted">خوش آمدید {{ current_user.full_name }}!</p>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-cog fa-2x me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0">{{ stats.total_accounts }}</h5>
+                            <p class="card-text mb-0">اکانت LinkedIn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-play-circle fa-2x me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0">{{ stats.active_runs }}</h5>
+                            <p class="card-text mb-0">ربات در حال اجرا</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle fa-2x me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0">{{ stats.successful_runs_today }}</h5>
+                            <p class="card-text mb-0">اجرای موفق امروز</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0">{{ stats.failed_runs_today }}</h5>
+                            <p class="card-text mb-0">خطا امروز</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- LinkedIn Accounts -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">اکانت‌های LinkedIn</h5>
+                    <a href="{{ url_for('add_account') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus me-1"></i>افزودن اکانت
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if accounts %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>ایمیل</th>
+                                        <th>نام پروفایل</th>
+                                        <th>وضعیت</th>
+                                        <th>آخرین فعالیت</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for account in accounts %}
+                                    <tr>
+                                        <td>{{ account.email }}</td>
+                                        <td>{{ account.profile_name or 'نامشخص' }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ 'success' if account.is_active else 'secondary' }}">
+                                                {{ 'فعال' if account.is_active else 'غیرفعال' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if account.last_activity %}
+                                                {{ account.last_activity.strftime('%Y/%m/%d %H:%M') }}
+                                            {% else %}
+                                                هرگز
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-user-plus fa-2x mb-3"></i>
+                            <p>هنوز اکانت LinkedIn اضافه نکرده‌اید</p>
+                            <a href="{{ url_for('add_account') }}" class="btn btn-primary">
+                                افزودن اولین اکانت
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Bot Runs -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">آخرین اجراهای رباتها</h5>
+                    <a href="{{ url_for('reports') }}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-chart-bar me-1"></i>تمام گزارشات
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recent_runs %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>نوع ربات</th>
+                                        <th>وضعیت</th>
+                                        <th>زمان شروع</th>
+                                        <th>مدت زمان</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for run in recent_runs %}
+                                    <tr>
+                                        <td>
+                                            {% if run.bot_type == 'activity_bot' %}
+                                                <i class="fas fa-heart me-1"></i>ربات فعالیت
+                                            {% elif run.bot_type == 'connection_request_bot' %}
+                                                <i class="fas fa-user-plus me-1"></i>ربات اتصال
+                                            {% else %}
+                                                <i class="fas fa-download me-1"></i>ربات استخراج
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if run.status == 'completed' %}
+                                                <span class="badge bg-success">تکمیل شده</span>
+                                            {% elif run.status == 'running' %}
+                                                <span class="badge bg-primary">در حال اجرا</span>
+                                            {% elif run.status == 'failed' %}
+                                                <span class="badge bg-danger">خطا</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">متوقف شده</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ run.start_time.strftime('%Y/%m/%d %H:%M') }}</td>
+                                        <td>
+                                            {% if run.end_time %}
+                                                {{ ((run.end_time - run.start_time).total_seconds() / 60) | round(1) }} دقیقه
+                                            {% else %}
+                                                در حال اجرا...
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-robot fa-2x mb-3"></i>
+                            <p>هنوز رباتی اجرا نشده است</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
